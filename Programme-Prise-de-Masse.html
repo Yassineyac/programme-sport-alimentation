@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Prise de Masse & Force — Programme</title>
+<style>
+  :root{
+    --bg:#13141c;
+    --cream:#f5f1e8;
+    --card:#ffffff;
+    --ink:#15171f;
+    --ink-soft:#6b6f7d;
+    --orange:#ff5a3c;
+    --orange-soft:#ffe2d8;
+    --teal:#13a98a;
+    --teal-soft:#d7f3ec;
+    --gold:#f2a900;
+    --gold-soft:#fdecc6;
+    --grey:#5b6275;
+    --grey-soft:#e7e8ee;
+    --radius:16px;
+    --shadow:0 2px 10px rgba(20,20,30,0.07);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink);
+    -webkit-tap-highlight-color:transparent;
+  }
+  .app{
+    max-width:560px;
+    margin:0 auto;
+    min-height:100vh;
+    background:var(--cream);
+    position:relative;
+    padding-bottom:40px;
+  }
+
+  /* HEADER */
+  header.top{
+    background:var(--bg);
+    color:#fff;
+    padding:18px 18px 14px;
+    position:sticky;
+    top:0;
+    z-index:30;
+  }
+  header.top .eyebrow{
+    font-size:11px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--orange);
+    font-weight:700;
+    margin-bottom:4px;
+  }
+  header.top h1{
+    margin:0;
+    font-size:21px;
+    font-weight:800;
+    letter-spacing:-0.01em;
+  }
+  header.top h1 span{color:var(--orange);}
+  .stat-row{
+    display:flex;
+    gap:8px;
+    margin-top:12px;
+    overflow-x:auto;
+  }
+  .stat-chip{
+    background:rgba(255,255,255,0.08);
+    border-radius:10px;
+    padding:6px 10px;
+    font-size:11px;
+    white-space:nowrap;
+    flex:none;
+  }
+  .stat-chip b{font-size:13px;display:block;}
+
+  /* PILL NAV */
+  nav.pills{
+    display:flex;
+    gap:6px;
+    overflow-x:auto;
+    padding:10px 14px;
+    background:var(--bg);
+    position:sticky;
+    top:78px;
+    z-index:29;
+    border-bottom:1px solid rgba(255,255,255,0.08);
+    scrollbar-width:none;
+  }
+  nav.pills::-webkit-scrollbar{display:none;}
+  .pill{
+    flex:none;
+    padding:8px 14px;
+    border-radius:999px;
+    font-size:13px;
+    font-weight:700;
+    color:#cfd2dc;
+    background:rgba(255,255,255,0.06);
+    cursor:pointer;
+    border:1px solid transparent;
+    user-select:none;
+  }
+  .pill.active{
+    background:#fff;
+    color:var(--bg);
+  }
+  .pill .dot{
+    display:inline-block;
+    width:7px;height:7px;border-radius:50%;
+    margin-right:6px;
+    vertical-align:middle;
+  }
+
+  main{padding:16px 14px 10px;}
+  section.tab{display:none;}
+  section.tab.active{display:block;}
+
+  /* Generic card */
+  .card{
+    background:var(--card);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:16px;
+    margin-bottom:14px;
+  }
+  .card h2{
+    margin:0 0 4px;
+    font-size:17px;
+    font-weight:800;
+  }
+  .card .sub{
+    font-size:13px;
+    color:var(--ink-soft);
+    margin-bottom:10px;
+    line-height:1.4;
+  }
+  .day-band{
+    border-radius:var(--radius) var(--radius) 0 0;
+    margin:-16px -16px 12px;
+    padding:16px;
+    color:#fff;
+  }
+  .day-band .label{font-size:11px;text-transform:uppercase;letter-spacing:.1em;opacity:.85;font-weight:700;}
+  .day-band h2{color:#fff;margin-top:2px;}
+  .band-orange{background:var(--orange);}
+  .band-teal{background:var(--teal);}
+  .band-gold{background:var(--gold);color:#1a1a1a;}
+  .band-gold .label, .band-gold h2{color:#1a1a1a;}
+  .band-grey{background:var(--grey);}
+
+  .progress-wrap{
+    margin-top:6px;
+  }
+  .progress-bar-bg{
+    height:7px;border-radius:99px;background:rgba(255,255,255,0.3);overflow:hidden;
+  }
+  .progress-bar-fill{
+    height:100%;background:#fff;border-radius:99px;width:0%;transition:width .25s;
+  }
+  .progress-label{font-size:11px;opacity:.9;margin-top:4px;}
+
+  .note{
+    background:var(--grey-soft);
+    border-radius:10px;
+    padding:10px 12px;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    margin-bottom:12px;
+    line-height:1.45;
+  }
+  .note b{color:var(--ink);}
+
+  /* Exercise row */
+  .ex-row{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    padding:11px 0;
+    border-bottom:1px solid #efece3;
+  }
+  .ex-row:last-child{border-bottom:none;}
+  .ex-row.done .ex-name{
+    text-decoration:line-through;
+    color:#b9bcc6;
+  }
+  input.checkbox{
+    flex:none;
+    width:28px;height:28px;
+    min-width:28px;
+    border-radius:8px;
+    border:2px solid #d8d4c6;
+    margin:1px 0 0 0;
+    -webkit-appearance:none;
+    appearance:none;
+    background:#fff;
+    cursor:pointer;
+    position:relative;
+  }
+  input.checkbox:checked{
+    background:var(--ink);
+    border-color:var(--ink);
+  }
+  input.checkbox:checked::after{
+    content:"✓";
+    color:#fff;
+    font-size:16px;
+    font-weight:700;
+    position:absolute;
+    top:48%;left:50%;
+    transform:translate(-50%,-50%);
+  }
+  label.ex-row, label.meal-top{cursor:pointer;}
+  .ex-body{flex:1;min-width:0;}
+  .ex-icon-wrap{
+    flex:none;
+    width:42px;height:42px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;justify-content:center;
+    margin-top:0;
+  }
+  .ex-icon{width:28px;height:28px;}
+  .ex-icon *{stroke:var(--ink);stroke-width:4;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+  .ex-icon .fill{fill:var(--ink);stroke:none;}
+  .ex-name{font-size:14.5px;font-weight:700;}
+  .ex-tag{font-size:11px;color:var(--orange);font-weight:700;display:block;margin-top:1px;}
+  .ex-meta{font-size:12px;color:var(--ink-soft);margin-top:2px;}
+  .ex-desc{font-size:12.5px;color:#4a4d57;margin-top:5px;line-height:1.45;background:#f6f3e9;border-radius:8px;padding:7px 9px;}
+  .ex-log{
+    margin-top:6px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .ex-log input{
+    border:1px solid #e2dfd3;
+    border-radius:8px;
+    padding:6px 8px;
+    font-size:12.5px;
+    width:108px;
+    background:#fbf9f4;
+  }
+  .ex-log label{font-size:11px;color:var(--ink-soft);}
+
+  /* Meal card */
+  .meal{
+    border-bottom:1px solid #efece3;
+    padding:12px 0;
+  }
+  .meal:last-child{border-bottom:none;}
+  .meal-top{display:flex;align-items:flex-start;gap:10px;}
+  .meal-info{flex:1;}
+  .meal-title-row{display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
+  .meal-name{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;}
+  .meal-kcal{font-size:12px;color:var(--ink-soft);font-weight:700;white-space:nowrap;}
+  .meal.done .meal-name{color:#b9bcc6;}
+  .meal ul{margin:6px 0 0 0;padding-left:18px;font-size:13px;color:#3a3d47;line-height:1.5;}
+  .meal.done ul{color:#c2c4cc;}
+  .day-total{
+    margin-top:6px;
+    background:var(--bg);
+    color:#fff;
+    border-radius:10px;
+    padding:9px 12px;
+    font-size:12.5px;
+    display:flex;justify-content:space-between;
+  }
+  .day-total b{color:var(--gold);}
+
+  .reset-btn{
+    display:block;
+    width:100%;
+    text-align:center;
+    background:none;
+    border:1px solid #e2dfd3;
+    color:var(--ink-soft);
+    border-radius:10px;
+    padding:9px;
+    font-size:12.5px;
+    font-weight:700;
+    margin-top:4px;
+    cursor:pointer;
+  }
+  .reset-btn:active{background:#f1eee4;}
+
+  /* Accueil */
+  .objectifs{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+  .obj-pill{
+    font-size:12px;font-weight:700;color:#fff;padding:6px 12px;border-radius:999px;
+  }
+  .week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:10px;}
+  .week-cell{
+    border-radius:10px;
+    padding:8px 4px;
+    text-align:center;
+    color:#fff;
+    font-size:10.5px;
+    font-weight:700;
+  }
+  .week-cell .d{display:block;font-size:11.5px;margin-bottom:2px;}
+  ol.rules{margin:0;padding-left:20px;font-size:13px;line-height:1.6;}
+  ol.rules li{margin-bottom:8px;}
+  ol.rules b{color:var(--orange);}
+
+  .global-progress{
+    background:var(--bg);
+    border-radius:var(--radius);
+    padding:16px;
+    color:#fff;
+    margin-bottom:14px;
+  }
+  .global-progress h2{color:#fff;margin:0 0 10px;font-size:16px;}
+  .ring-row{display:flex;gap:10px;}
+  .ring{flex:1;text-align:center;}
+  .ring .pct{font-size:22px;font-weight:800;color:var(--gold);}
+  .ring .lbl{font-size:11px;color:#aeb1bd;margin-top:2px;}
+
+  .changelog{font-size:12.5px;line-height:1.6;color:var(--ink-soft);}
+  .changelog li{margin-bottom:6px;}
+  .changelog b{color:var(--ink);}
+
+  /* Suivi */
+  .field-row{display:flex;gap:8px;margin-bottom:8px;}
+  .field-row input{
+    flex:1;
+    border:1px solid #e2dfd3;
+    border-radius:10px;
+    padding:9px 10px;
+    font-size:13.5px;
+    background:#fbf9f4;
+  }
+  .field-row select{
+    border:1px solid #e2dfd3;
+    border-radius:10px;
+    padding:9px 10px;
+    font-size:13px;
+    background:#fbf9f4;
+  }
+  .add-btn{
+    background:var(--ink);
+    color:#fff;
+    border:none;
+    border-radius:10px;
+    padding:9px 14px;
+    font-size:13px;
+    font-weight:700;
+    cursor:pointer;
+  }
+  table.log{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px;}
+  table.log th{text-align:left;color:var(--ink-soft);font-weight:700;padding:4px 6px;border-bottom:1px solid #e9e6da;}
+  table.log td{padding:6px 6px;border-bottom:1px solid #f1eee4;}
+  table.log td.del{color:var(--orange);text-align:right;cursor:pointer;font-weight:700;}
+
+  footer.app-footer{
+    text-align:center;
+    font-size:11px;
+    color:#9a8f7a99;
+    padding:18px 0 4px;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="top">
+    <div class="eyebrow">Programme personnalisé</div>
+    <h1>Prise de <span>Masse</span> & Force</h1>
+    <div class="stat-row" id="statRow"></div>
+  </header>
+
+  <nav class="pills" id="pillNav"></nav>
+
+  <main id="main"></main>
+
+  <footer class="app-footer">Coche, note tes charges, dépasse-toi. 💪 — Conçu pour 5 séances/semaine.</footer>
+</div>
+
+<script>
+/* ============== DATA ============== */
+const DAY_COLORS = {
+  lun:{band:'band-orange',dot:'#ff5a3c',label:'Lundi'},
+  mar:{band:'band-teal',dot:'#13a98a',label:'Mardi'},
+  mer:{band:'band-gold',dot:'#f2a900',label:'Mercredi'},
+  jeu:{band:'band-orange',dot:'#ff5a3c',label:'Jeudi'},
+  ven:{band:'band-teal',dot:'#13a98a',label:'Vendredi'},
+  sam:{band:'band-grey',dot:'#5b6275',label:'Samedi'},
+  dim:{band:'band-grey',dot:'#5b6275',label:'Dimanche'}
+};
+
+const ICONS = {
+  bench_press:`<rect x="8" y="44" width="40" height="6" rx="2"/><circle cx="16" cy="38" r="5" class="fill"/><line x1="21" y1="38" x2="36" y2="38"/><line x1="36" y1="38" x2="42" y2="48"/><line x1="42" y1="48" x2="48" y2="42"/><line x1="24" y1="38" x2="20" y2="18"/><line x1="28" y1="38" x2="38" y2="18"/><line x1="14" y1="18" x2="44" y2="18"/><circle cx="14" cy="18" r="4" class="fill"/><circle cx="44" cy="18" r="4" class="fill"/>`,
+  dip:`<line x1="20" y1="14" x2="20" y2="50"/><line x1="44" y1="14" x2="44" y2="50"/><circle cx="32" cy="18" r="5" class="fill"/><line x1="32" y1="23" x2="32" y2="38"/><line x1="32" y1="26" x2="20" y2="32"/><line x1="32" y1="26" x2="44" y2="32"/><line x1="32" y1="38" x2="38" y2="46"/><line x1="38" y1="46" x2="44" y2="42"/>`,
+  fly:`<circle cx="32" cy="12" r="5" class="fill"/><line x1="32" y1="17" x2="32" y2="38"/><path d="M32,22 C24,20 16,24 14,28"/><path d="M32,22 C40,20 48,24 50,28"/><circle cx="14" cy="28" r="4" class="fill"/><circle cx="50" cy="28" r="4" class="fill"/><line x1="32" y1="38" x2="26" y2="56"/><line x1="32" y1="38" x2="38" y2="56"/>`,
+  shoulder_press:`<circle cx="32" cy="12" r="5" class="fill"/><line x1="32" y1="17" x2="32" y2="40"/><line x1="32" y1="20" x2="22" y2="8"/><line x1="32" y1="20" x2="42" y2="8"/><line x1="16" y1="8" x2="48" y2="8"/><circle cx="16" cy="8" r="4" class="fill"/><circle cx="48" cy="8" r="4" class="fill"/><line x1="32" y1="40" x2="26" y2="58"/><line x1="32" y1="40" x2="38" y2="58"/>`,
+  lateral_raise:`<circle cx="32" cy="12" r="5" class="fill"/><line x1="32" y1="17" x2="32" y2="40"/><line x1="32" y1="22" x2="12" y2="22"/><line x1="32" y1="22" x2="52" y2="22"/><circle cx="12" cy="22" r="4" class="fill"/><circle cx="52" cy="22" r="4" class="fill"/><line x1="32" y1="40" x2="26" y2="58"/><line x1="32" y1="40" x2="38" y2="58"/>`,
+  front_raise:`<circle cx="32" cy="12" r="5" class="fill"/><line x1="32" y1="17" x2="32" y2="40"/><line x1="32" y1="22" x2="44" y2="10"/><line x1="32" y1="22" x2="40" y2="12"/><circle cx="44" cy="10" r="4" class="fill"/><circle cx="40" cy="12" r="4" class="fill"/><line x1="32" y1="40" x2="26" y2="58"/><line x1="32" y1="40" x2="38" y2="58"/>`,
+  triceps_extension:`<circle cx="30" cy="12" r="5" class="fill"/><line x1="30" y1="17" x2="30" y2="40"/><line x1="30" y1="20" x2="40" y2="14"/><line x1="40" y1="14" x2="36" y2="26"/><circle cx="36" cy="26" r="4" class="fill"/><line x1="30" y1="40" x2="24" y2="58"/><line x1="30" y1="40" x2="36" y2="58"/>`,
+  deadlift:`<circle cx="26" cy="10" r="5" class="fill"/><line x1="27" y1="15" x2="36" y2="30"/><line x1="36" y1="30" x2="30" y2="54"/><line x1="36" y1="30" x2="40" y2="54"/><line x1="30" y1="30" x2="24" y2="54"/><line x1="14" y1="54" x2="50" y2="54"/><circle cx="14" cy="54" r="5" class="fill"/><circle cx="50" cy="54" r="5" class="fill"/>`,
+  row_horizontal:`<rect x="40" y="30" width="6" height="20"/><circle cx="20" cy="22" r="5" class="fill"/><line x1="22" y1="27" x2="22" y2="44"/><line x1="22" y1="44" x2="14" y2="54"/><line x1="22" y1="44" x2="30" y2="54"/><line x1="22" y1="32" x2="40" y2="38"/>`,
+  pull_up:`<line x1="12" y1="10" x2="52" y2="10"/><circle cx="18" cy="10" r="4" class="fill"/><circle cx="46" cy="10" r="4" class="fill"/><line x1="18" y1="10" x2="26" y2="24"/><line x1="46" y1="10" x2="38" y2="24"/><circle cx="32" cy="28" r="5" class="fill"/><line x1="32" y1="33" x2="32" y2="48"/><line x1="32" y1="48" x2="38" y2="58"/>`,
+  row_unilateral:`<rect x="10" y="40" width="20" height="6" rx="2"/><circle cx="38" cy="20" r="5" class="fill"/><line x1="36" y1="25" x2="20" y2="40"/><line x1="20" y1="40" x2="14" y2="40"/><line x1="34" y1="30" x2="44" y2="40"/><circle cx="44" cy="40" r="4" class="fill"/><line x1="20" y1="40" x2="16" y2="56"/><line x1="20" y1="40" x2="26" y2="56"/>`,
+  row_bent:`<circle cx="24" cy="10" r="5" class="fill"/><line x1="26" y1="15" x2="36" y2="32"/><line x1="36" y1="32" x2="30" y2="54"/><line x1="36" y1="32" x2="40" y2="54"/><line x1="30" y1="32" x2="22" y2="40"/><line x1="14" y1="40" x2="32" y2="40"/><circle cx="14" cy="40" r="4" class="fill"/><circle cx="32" cy="40" r="4" class="fill"/>`,
+  bicep_curl:`<circle cx="32" cy="12" r="5" class="fill"/><line x1="32" y1="17" x2="32" y2="40"/><line x1="32" y1="22" x2="30" y2="34"/><line x1="30" y1="34" x2="36" y2="24"/><circle cx="36" cy="24" r="4" class="fill"/><line x1="32" y1="40" x2="26" y2="58"/><line x1="32" y1="40" x2="38" y2="58"/>`,
+  face_pull:`<rect x="46" y="18" width="6" height="6"/><circle cx="22" cy="14" r="5" class="fill"/><line x1="22" y1="19" x2="22" y2="40"/><line x1="22" y1="22" x2="34" y2="16"/><line x1="34" y1="16" x2="46" y2="20"/><line x1="22" y1="40" x2="16" y2="58"/><line x1="22" y1="40" x2="28" y2="58"/>`,
+  squat:`<circle cx="32" cy="14" r="5" class="fill"/><line x1="20" y1="20" x2="44" y2="20"/><circle cx="18" cy="20" r="4" class="fill"/><circle cx="46" cy="20" r="4" class="fill"/><line x1="32" y1="19" x2="32" y2="32"/><line x1="32" y1="32" x2="22" y2="46"/><line x1="22" y1="46" x2="20" y2="58"/><line x1="32" y1="32" x2="42" y2="46"/><line x1="42" y1="46" x2="44" y2="58"/>`,
+  hip_thrust:`<line x1="6" y1="48" x2="56" y2="48"/><circle cx="14" cy="44" r="5" class="fill"/><line x1="18" y1="46" x2="34" y2="38"/><line x1="34" y1="38" x2="34" y2="58"/><line x1="40" y1="36" x2="46" y2="36"/><circle cx="40" cy="36" r="4" class="fill"/><circle cx="46" cy="36" r="4" class="fill"/>`,
+  lunge:`<rect x="40" y="40" width="16" height="6" rx="2"/><circle cx="22" cy="12" r="5" class="fill"/><line x1="22" y1="17" x2="22" y2="38"/><line x1="22" y1="38" x2="16" y2="58"/><line x1="22" y1="38" x2="30" y2="48"/><line x1="30" y1="48" x2="44" y2="40"/><line x1="22" y1="24" x2="14" y2="40"/><line x1="22" y1="24" x2="30" y2="40"/>`,
+  leg_press:`<rect x="8" y="44" width="40" height="6" rx="2"/><circle cx="16" cy="38" r="5" class="fill"/><line x1="21" y1="38" x2="34" y2="44"/><line x1="34" y1="44" x2="34" y2="30"/><line x1="34" y1="30" x2="48" y2="30"/><line x1="48" y1="14" x2="48" y2="46"/>`,
+  leg_curl:`<rect x="6" y="40" width="40" height="6" rx="2"/><circle cx="12" cy="34" r="5" class="fill"/><line x1="17" y1="34" x2="38" y2="40"/><line x1="38" y1="40" x2="44" y2="26"/><circle cx="44" cy="26" r="4" class="fill"/><path d="M44,32 A10,10 0 0,1 38,40"/>`,
+  hip_abduction:`<circle cx="32" cy="12" r="5" class="fill"/><line x1="32" y1="17" x2="32" y2="36"/><line x1="32" y1="36" x2="18" y2="48"/><line x1="32" y1="36" x2="46" y2="48"/><path d="M18,40 L10,40"/><path d="M46,40 L54,40"/>`,
+  calf_raise:`<line x1="10" y1="58" x2="54" y2="58"/><circle cx="32" cy="12" r="5" class="fill"/><line x1="32" y1="17" x2="32" y2="40"/><line x1="32" y1="40" x2="28" y2="54"/><line x1="28" y1="54" x2="28" y2="58"/><line x1="32" y1="40" x2="36" y2="54"/><line x1="36" y1="54" x2="36" y2="58"/><path d="M22,50 l-4,-4 M22,50 l-4,4"/>`,
+  plank:`<line x1="6" y1="56" x2="58" y2="56"/><circle cx="14" cy="40" r="5" class="fill"/><line x1="18" y1="42" x2="48" y2="50"/><line x1="18" y1="46" x2="14" y2="54"/><line x1="48" y1="50" x2="52" y2="56"/>`,
+  side_plank:`<line x1="6" y1="56" x2="58" y2="56"/><circle cx="14" cy="38" r="5" class="fill"/><line x1="18" y1="40" x2="48" y2="48"/><line x1="22" y1="44" x2="18" y2="56"/><line x1="48" y1="48" x2="52" y2="56"/><line x1="30" y1="30" x2="34" y2="22"/>`,
+  dead_bug:`<line x1="6" y1="50" x2="58" y2="50"/><circle cx="20" cy="44" r="5" class="fill"/><line x1="24" y1="44" x2="40" y2="44"/><line x1="26" y1="40" x2="14" y2="28"/><line x1="34" y1="40" x2="46" y2="22"/><line x1="40" y1="44" x2="46" y2="50"/>`,
+  shrug:`<circle cx="32" cy="12" r="5" class="fill"/><line x1="22" y1="20" x2="42" y2="20"/><line x1="32" y1="20" x2="32" y2="40"/><line x1="32" y1="22" x2="22" y2="40"/><line x1="32" y1="22" x2="42" y2="40"/><circle cx="22" cy="40" r="4" class="fill"/><circle cx="42" cy="40" r="4" class="fill"/><line x1="32" y1="40" x2="26" y2="58"/><line x1="32" y1="40" x2="38" y2="58"/><path d="M18,16 l-4,-2 M18,16 l-2,-4"/><path d="M46,16 l4,-2 M46,16 l2,-4"/>`,
+  walk:`<circle cx="26" cy="10" r="5" class="fill"/><line x1="28" y1="15" x2="34" y2="30"/><line x1="34" y1="30" x2="44" y2="24"/><line x1="34" y1="30" x2="22" y2="40"/><line x1="34" y1="30" x2="46" y2="44"/><line x1="34" y1="30" x2="24" y2="56"/><path d="M48,16 q4,2 6,0 M48,22 q4,2 6,0 M48,28 q4,2 6,0"/>`,
+  generic:`<rect x="14" y="28" width="36" height="8" rx="2"/><circle cx="12" cy="32" r="8" class="fill"/><circle cx="52" cy="32" r="8" class="fill"/>`
+};
+function iconSvg(key){ return `<svg viewBox="0 0 64 64" class="ex-icon">${ICONS[key]||ICONS.generic}</svg>`; }
+function iconBg(day){
+  if(day==='lun'||day==='jeu') return 'var(--orange-soft)';
+  if(day==='mar'||day==='ven') return 'var(--teal-soft)';
+  if(day==='mer') return 'var(--gold-soft)';
+  return 'var(--grey-soft)';
+}
+
+const TRAINING = {
+  lun:{
+    title:'Push A — Torse', sub:'Charges lourdes sur le développé couché en ouverture, puis épaules/triceps en complément.',
+    warmup:'5 min vélo/rameur + rotations d\'épaules, puis 2 séries légères de développé couché (barre vide / 50%) avant la 1ère série lourde.',
+    note:'<b>Ajustement :</b> écarté passé à 2 séries (au lieu de 3) pour limiter le volume épaules total de la semaine. Gainage ajouté en fin de séance.',
+    items:[
+      {n:'Développé couché barre',s:'5',r:'6-8',rest:'120s',tag:'Mouvement principal — priorité charge',icon:'bench_press',desc:'Allongé sur le banc, barre au-dessus de la poitrine. Descends jusqu\'à toucher légèrement le torse, pousse en gardant les coudes à ~45° du buste.'},
+      {n:'Développé incliné haltères',s:'4',r:'8-10',rest:'90s',icon:'bench_press',desc:'Banc incliné à 30-45°. Pousse les haltères au-dessus de la poitrine haute, contrôle la descente sans les claquer en haut.'},
+      {n:'Dips (lestés si possible)',s:'3',r:'10-12',rest:'90s',icon:'dip',desc:'Bras tendus sur les barres parallèles, penche légèrement le buste en avant, descends à 90° aux coudes, repousse.'},
+      {n:'Écarté poulie ou haltères',s:'2',r:'12-15',rest:'60s',icon:'fly',desc:'Bras légèrement fléchis, ramène-les devant toi en arc de cercle (comme pour enlacer un arbre), sans plier davantage les coudes.'},
+      {n:'Développé militaire haltères assis',s:'4',r:'8-10',rest:'90s',icon:'shoulder_press',desc:'Assis, dos droit, pousse les haltères au-dessus de la tête jusqu\'à extension complète sans cambrer le bas du dos.'},
+      {n:'Élévations latérales',s:'4',r:'12-15',rest:'60s',icon:'lateral_raise',desc:'Bras légèrement fléchis, lève-les sur les côtés jusqu\'à hauteur d\'épaule, coudes un peu plus hauts que les mains.'},
+      {n:'Extension triceps à la poulie',s:'3',r:'12-15',rest:'60s',icon:'triceps_extension',desc:'Coudes fixes collés au corps, tends les bras vers le bas en contractant les triceps, reviens lentement.'},
+      {n:'Gainage — Planche',s:'3',r:'40-60s',rest:'45s',tag:'Nouveau — stabilité lombaire',icon:'plank',desc:'Sur les avant-bras et les pointes de pieds, corps aligné tête-talons, contracte abdos et fessiers, ne creuse pas le dos.'},
+      {n:'Dead bug',s:'3',r:'12/côté',rest:'30s',tag:'Nouveau',icon:'dead_bug',desc:'Allongé sur le dos, bras et jambes à 90°. Tends un bras et la jambe opposée vers le sol sans cambrer le bas du dos.'}
+    ]
+  },
+  mar:{
+    title:'Pull A — Dos', sub:'Épaisseur du dos avec le soulevé de terre en ouverture, puis largeur (tirages) et biceps.',
+    warmup:'5 min rameur + mobilité hanches/dos, puis 2 séries légères de soulevé de terre (barre vide / 50%) avant la série lourde.',
+    note:'<b>Semaine 1 :</b> reste à 60-70% du poids visé sur le soulevé de terre. Monte normalement dès la semaine 2 si aucune gêne.',
+    items:[
+      {n:'Soulevé de terre (classique ou roumain)',s:'4',r:'6-8',rest:'150s',tag:'Mouvement principal — priorité charge',icon:'deadlift',desc:'Pieds sous la barre, dos plat, pousse sur les talons en gardant la barre proche des jambes jusqu\'à extension complète des hanches.'},
+      {n:'Tirage horizontal à la poulie',s:'4',r:'8-10',rest:'90s',icon:'row_horizontal',desc:'Assis, tire la poignée vers le nombril en rapprochant les omoplates, garde le dos droit sans te balancer.'},
+      {n:'Tractions ou tirage vertical lourd',s:'4',r:'8-10',rest:'90s',icon:'pull_up',desc:'Prise large, tire le buste vers la barre en menant avec les coudes, contrôle la descente.'},
+      {n:'Rowing haltère unilatéral',s:'3',r:'10-12 / bras',rest:'90s',icon:'row_unilateral',desc:'Une main et un genou sur le banc, tire l\'haltère vers la hanche en gardant le coude proche du corps.'},
+      {n:'Curl biceps à la barre',s:'4',r:'8-10',rest:'60s',icon:'bicep_curl',desc:'Coudes fixes le long du corps, monte la barre jusqu\'aux épaules sans balancer le buste.'},
+      {n:'Curl incliné haltères',s:'3',r:'12-15',rest:'60s',icon:'bicep_curl',desc:'Assis sur banc incliné, bras pendant vers l\'arrière, monte les haltères en gardant les coudes immobiles.'},
+      {n:'Face pull (corde, poulie haute)',s:'3',r:'15-20',rest:'45s',icon:'face_pull',desc:'Tire la corde vers le visage en écartant les mains, coudes hauts, serre les omoplates en fin de mouvement.'}
+    ]
+  },
+  mer:{
+    title:'Legs & Fessiers', sub:'Volume le plus élevé de la semaine pour maximiser jambes et fessiers.',
+    warmup:'5-8 min vélo + mobilité hanches/chevilles, puis 2-3 séries légères de squat (montée progressive) avant les séries lourdes.',
+    note:'<b>Semaine 1 :</b> reste à 60-70% du poids visé sur le squat. <b>Ajout :</b> leg curl pour équilibrer le travail des ischios.',
+    items:[
+      {n:'Squat barre',s:'5',r:'6-8',rest:'150s',tag:'Mouvement principal — priorité charge',icon:'squat',desc:'Barre sur le haut du dos, pieds largeur épaules, descends hanches en arrière jusqu\'aux cuisses parallèles au sol, remonte en poussant les talons.'},
+      {n:'Hip thrust barre',s:'4',r:'8-10',rest:'90s',tag:'Priorité fessiers',icon:'hip_thrust',desc:'Haut du dos sur un banc, barre sur les hanches, pousse les hanches vers le haut jusqu\'à extension complète, contracte les fessiers en haut.'},
+      {n:'Fentes bulgares',s:'4',r:'10-12 / jambe',rest:'90s',icon:'lunge',desc:'Pied arrière posé sur un banc, descends le genou avant vers le sol, remonte en poussant sur le talon avant.'},
+      {n:'Presse à cuisses',s:'4',r:'10-12',rest:'90s',icon:'leg_press',desc:'Pieds largeur épaules sur la plateforme, descends jusqu\'à 90° de flexion des genoux, pousse sans verrouiller complètement.'},
+      {n:'Leg curl (allongé/assis)',s:'3',r:'12-15',rest:'60s',tag:'Nouveau — ischios',icon:'leg_curl',desc:'Allongé ou assis, fléchis les genoux pour ramener les talons vers les fessiers, contrôle le retour.'},
+      {n:'Soulevé de terre roumain (haltères)',s:'3',r:'10-12',rest:'90s',icon:'deadlift',desc:'Genoux légèrement fléchis, descends les haltères en poussant les hanches en arrière, dos plat, remonte en contractant ischios/fessiers.'},
+      {n:'Abduction de hanche (machine)',s:'3',r:'15-20',rest:'60s',icon:'hip_abduction',desc:'Assis, genoux contre les coussinets, écarte les genoux vers l\'extérieur en contractant les fessiers.'},
+      {n:'Mollets debout',s:'4',r:'12-15',rest:'45s',icon:'calf_raise',desc:'Monte sur la pointe des pieds le plus haut possible, marque une pause, redescends lentement sous le niveau de départ.'}
+    ]
+  },
+  jeu:{
+    title:'Push B — Épaules', sub:'Le développé militaire devient le mouvement prioritaire pour construire la largeur des épaules.',
+    warmup:'5 min cardio léger + rotations d\'épaules avec élastique, puis 2 séries légères de développé militaire avant les séries lourdes.',
+    note:'<b>Ajustement :</b> élévations latérales lourdes, Arnold press et élévations frontales réduites d\'1 série chacune — le volume épaules cumulé Lundi+Jeudi était trop élevé pour une reprise.',
+    items:[
+      {n:'Développé militaire barre',s:'5',r:'6-8',rest:'120s',tag:'Mouvement principal — priorité charge',icon:'shoulder_press',desc:'Barre au niveau des épaules, pousse au-dessus de la tête en gardant le buste droit, verrouille les bras en haut.'},
+      {n:'Développé incliné barre ou machine',s:'4',r:'8-10',rest:'90s',icon:'bench_press',desc:'Banc incliné, pousse la barre/poignées au-dessus de la poitrine haute, contrôle la descente.'},
+      {n:'Élévations latérales lourdes',s:'3',r:'10-12',rest:'60s',icon:'lateral_raise',desc:'Même mouvement que les élévations classiques mais charge plus lourde — légère flexion du buste autorisée, reste contrôlé.'},
+      {n:'Arnold press',s:'2',r:'10-12',rest:'90s',icon:'shoulder_press',desc:'Démarre haltères devant toi paumes vers toi, pousse en tournant les poignets pour finir paumes vers l\'avant en haut.'},
+      {n:'Dips ou développé serré (triceps)',s:'4',r:'8-10',rest:'90s',icon:'dip',desc:'Mains rapprochées (largeur épaules), coudes proches du corps, descends puis pousse en insistant sur les triceps.'},
+      {n:'Extension triceps barre EZ',s:'3',r:'12',rest:'60s',icon:'triceps_extension',desc:'Coudes fixes au-dessus de la tête ou collés au corps, tends les bras en contractant les triceps.'},
+      {n:'Élévations frontales',s:'2',r:'12-15',rest:'45s',icon:'front_raise',desc:'Bras tendus ou légèrement fléchis, lève-les devant toi jusqu\'à hauteur d\'épaule, contrôle la descente.'},
+      {n:'Gainage — Planche latérale',s:'3',r:'30-40s / côté',rest:'30s',tag:'Nouveau',icon:'side_plank',desc:'Sur un avant-bras, corps aligné de la tête aux pieds, hanche relevée, ne laisse pas le bassin tomber.'}
+    ]
+  },
+  ven:{
+    title:'Pull B — Dos & Bras', sub:'Épaisseur du dos, gros volume de biceps, et un rappel fessiers.',
+    warmup:'5 min rameur + mobilité dos/épaules, puis 1-2 séries légères de rowing avant la série lourde.',
+    note:'',
+    items:[
+      {n:'Rowing barre buste penché',s:'4',r:'8-10',rest:'120s',tag:'Mouvement principal — priorité charge',icon:'row_bent',desc:'Buste penché à ~45°, dos plat, tire la barre vers le bas du ventre en serrant les omoplates.'},
+      {n:'Tirage vertical prise large',s:'4',r:'8-10',rest:'90s',icon:'pull_up',desc:'Prise large, tire la barre vers le haut de la poitrine en menant avec les coudes vers le bas.'},
+      {n:'Rowing T-bar ou poulie basse',s:'3',r:'10-12',rest:'90s',icon:'row_horizontal',desc:'Buste légèrement penché, tire la poignée vers le nombril, omoplates serrées, dos stable.'},
+      {n:'Hip thrust',s:'4',r:'10-12',rest:'90s',tag:'Rappel fessiers',icon:'hip_thrust',desc:'Haut du dos sur un banc, pousse les hanches vers le haut jusqu\'à extension complète, contracte les fessiers en haut.'},
+      {n:'Curl haltères alterné (lourd)',s:'4',r:'8-10',rest:'60s',icon:'bicep_curl',desc:'Un bras à la fois, coude fixe, monte l\'haltère en supination (paume vers le haut) jusqu\'à l\'épaule.'},
+      {n:'Curl marteau',s:'3',r:'12',rest:'60s',icon:'bicep_curl',desc:'Prise neutre (paumes face à face), monte les haltères coudes fixes, sans tourner les poignets.'},
+      {n:'Shrugs (trapèzes)',s:'3',r:'12-15',rest:'45s',icon:'shrug',desc:'Bras tendus le long du corps, hausse les épaules vers les oreilles sans plier les coudes, contrôle la descente.'}
+    ]
+  },
+  sam:{
+    title:'Marche active', sub:'45 à 60 min, allure soutenue (tu peux parler mais pas chanter).',
+    warmup:'',
+    note:'<b>Recommandation semaines 1-3 :</b> remplace par un repos complet pour bien relancer la récupération après la convalescence. Reprends la marche soutenue dès la semaine 4.',
+    items:[
+      {n:'Marche rapide 45-60 min (ou repos complet sem. 1-3)',s:'1',r:'45-60 min',rest:'—',icon:'walk',desc:'Allure où tu peux parler mais pas chanter — rythme cardiaque clairement élevé, pas une promenade tranquille.'},
+      {n:'Objectif pas quotidien',s:'1',r:'8 000-10 000 pas',rest:'—',icon:'walk',desc:'Vise 8 000 à 10 000 pas sur la journée. C\'est le NEAT — un levier sous-estimé mais efficace pour la perte de graisse.'}
+    ]
+  },
+  dim:{
+    title:'Marche active', sub:'45 à 60 min + repas un peu plus libre — jour de respiration mentale.',
+    warmup:'',
+    note:'',
+    items:[
+      {n:'Marche rapide 45-60 min',s:'1',r:'45-60 min',rest:'—',icon:'walk',desc:'Allure où tu peux parler mais pas chanter — rythme cardiaque clairement élevé, pas une promenade tranquille.'},
+      {n:'Objectif pas quotidien',s:'1',r:'8 000-10 000 pas',rest:'—',icon:'walk',desc:'Vise 8 000 à 10 000 pas sur la journée. C\'est le NEAT — un levier sous-estimé mais efficace pour la perte de graisse.'}
+    ]
+  }
+};
+
+const MEALS = {
+  lun:{tot:'~2 450 kcal · ~195g protéines',meals:[
+    {n:'Petit-déjeuner',k:'~490 kcal',items:['3 œufs entiers brouillés','1 tranche de pain complet','1/4 avocat','Café ou thé sans sucre']},
+    {n:'Déjeuner',k:'~780 kcal',items:['200g blanc de poulet grillé','150g riz basmati cuit','Légumes sautés (poivrons, courgettes)','1 c.s. huile d\'olive']},
+    {n:'Collation (post-training)',k:'~425 kcal',items:['250g skyr ou fromage blanc 0%','35g flocons d\'avoine','1 banane']},
+    {n:'Dîner',k:'~740 kcal',items:['200g filet de saumon ou dorade','150g patate douce','Salade verte','1 c.s. huile d\'olive']}
+  ]},
+  mar:{tot:'~2 500 kcal · ~200g protéines',meals:[
+    {n:'Petit-déjeuner',k:'~545 kcal',items:['Porridge : 45g flocons d\'avoine + 250ml lait demi-écrémé','2 œufs durs','100g fruits rouges']},
+    {n:'Déjeuner',k:'~830 kcal',items:['200g dinde émincée','170g pâtes complètes','Sauce tomate maison','20g parmesan']},
+    {n:'Collation',k:'~370 kcal',items:['1 tranche de pain complet','80g labneh ou fromage blanc','20g amandes']},
+    {n:'Dîner',k:'~745 kcal',items:['200g bœuf haché maigre (5%)','140g riz','Légumes verts vapeur']}
+  ]},
+  mer:{tot:'~2 500 kcal · ~195g protéines',meals:[
+    {n:'Petit-déjeuner',k:'~520 kcal',items:['Omelette 3 œufs + 30g fromage','1 tranche de pain complet']},
+    {n:'Déjeuner',k:'~785 kcal',items:['200g cabillaud ou merlan','170g riz','Légumes vapeur','1 c.s. huile d\'olive']},
+    {n:'Collation',k:'~430 kcal',items:['200g yaourt grec','25g granola maison (avoine, miel, noix)','1 fruit']},
+    {n:'Dîner',k:'~765 kcal',items:['200g blanc de poulet','140g quinoa cuit','Légumes rôtis','1 c.s. huile d\'olive']}
+  ]},
+  jeu:{tot:'~2 515 kcal · ~200g protéines',meals:[
+    {n:'Petit-déjeuner',k:'~530 kcal',items:['Pancakes protéinés : 35g flocons d\'avoine + 2 œufs + 1 banane écrasée']},
+    {n:'Déjeuner',k:'~810 kcal',items:['200g poulet ou dinde','170g pâtes complètes','Légumes','1 c.s. huile d\'olive']},
+    {n:'Collation',k:'~455 kcal',items:['Smoothie : 250ml lait + 30g whey (ou 100g fromage blanc) + 1 banane','10g beurre de cacahuète']},
+    {n:'Dîner',k:'~720 kcal',items:['200g poisson blanc','150g patate douce','Salade verte']}
+  ]},
+  ven:{tot:'~2 380 kcal · ~195g protéines',meals:[
+    {n:'Petit-déjeuner',k:'~440 kcal',items:['3 œufs','1/4 avocat','1 tranche de pain complet']},
+    {n:'Déjeuner',k:'~800 kcal',items:['200g bœuf maigre','170g riz','Légumes']},
+    {n:'Collation',k:'~390 kcal',items:['200g fromage blanc','15g noix ou amandes','1 fruit']},
+    {n:'Dîner',k:'~750 kcal',items:['200g poulet','130g lentilles cuites','Légumes verts']}
+  ]},
+  sam:{tot:'~2 365 kcal · ~178g protéines (jour sans entraînement)',meals:[
+    {n:'Petit-déjeuner',k:'~505 kcal',items:['Porridge : 45g flocons d\'avoine + lait','1 fruit']},
+    {n:'Déjeuner',k:'~740 kcal',items:['200g poisson','150g riz','Légumes']},
+    {n:'Collation',k:'~400 kcal',items:['200g yaourt grec','15g fruits secs']},
+    {n:'Dîner',k:'~720 kcal',items:['200g poulet grillé','80g riz','Légumes']}
+  ]},
+  dim:{tot:'~2 100-2 500 kcal selon repas libre',meals:[
+    {n:'Petit-déjeuner',k:'~470 kcal',items:['3 œufs','1 tranche de pain complet','1 fruit']},
+    {n:'Déjeuner (repas libre modéré)',k:'~800 kcal',items:['Viande ou poisson au choix','Féculent au choix — portion modérée (1 poing fermé)','Légumes','Pas de restriction stricte, mais pas d\'excès']},
+    {n:'Collation',k:'~280 kcal',items:['1 fruit','15g oléagineux']},
+    {n:'Dîner (léger)',k:'~550 kcal',items:['Soupe de légumes','150g poulet ou poisson']}
+  ]}
+};
+
+const DAY_ORDER = ['lun','mar','mer','jeu','ven','sam','dim'];
+
+/* ============== STORAGE HELPERS ============== */
+const KEY = 'ppmf_v1';
+function loadState(){
+  try{ return JSON.parse(localStorage.getItem(KEY)) || {checks:{}, logs:{}}; }
+  catch(e){ return {checks:{}, logs:{}}; }
+}
+function saveState(){
+  try{ localStorage.setItem(KEY, JSON.stringify(state)); }
+  catch(e){ /* stockage indisponible — on continue sans persister */ }
+}
+let state = loadState();
+
+const SUIVI_KEY = 'ppmf_suivi_v1';
+function loadSuivi(){
+  try{ return JSON.parse(localStorage.getItem(SUIVI_KEY)) || []; }
+  catch(e){ return []; }
+}
+function saveSuivi(){
+  try{ localStorage.setItem(SUIVI_KEY, JSON.stringify(suivi)); }
+  catch(e){ /* stockage indisponible — on continue sans persister */ }
+}
+let suivi = loadSuivi();
+
+/* ============== RENDER ============== */
+const main = document.getElementById('main');
+const pillNav = document.getElementById('pillNav');
+const statRow = document.getElementById('statRow');
+let activeTab = 'accueil';
+
+statRow.innerHTML = `
+  <div class="stat-chip"><b>33 ans</b>Âge</div>
+  <div class="stat-chip"><b>1m79</b>Taille</div>
+  <div class="stat-chip"><b>91 kg</b>Poids</div>
+  <div class="stat-chip"><b>5/sem</b>Séances</div>
+`;
+
+function buildPills(){
+  const tabs = [{key:'accueil', label:'Accueil'}]
+    .concat(DAY_ORDER.map(d=>({key:d, label: DAY_COLORS[d].label.slice(0,3)})))
+    .concat([{key:'suivi', label:'Suivi'}]);
+  pillNav.innerHTML = tabs.map(t=>{
+    const dotColor = DAY_COLORS[t.key] ? DAY_COLORS[t.key].dot : null;
+    return `<div class="pill ${activeTab===t.key?'active':''}" data-tab="${t.key}">
+      ${dotColor?`<span class="dot" style="background:${dotColor}"></span>`:''}${t.label}
+    </div>`;
+  }).join('');
+  pillNav.querySelectorAll('.pill').forEach(p=>{
+    p.addEventListener('click', ()=>{ activeTab = p.dataset.tab; render(); window.scrollTo({top:0,behavior:'smooth'}); });
+  });
+}
+
+function exId(day,idx){ return `ex_${day}_${idx}`; }
+function mealId(day,idx){ return `meal_${day}_${idx}`; }
+
+function dayCompletion(day){
+  const tItems = TRAINING[day].items, mItems = MEALS[day].meals;
+  let total = tItems.length + mItems.length, done = 0;
+  tItems.forEach((_,i)=>{ if(state.checks[exId(day,i)]) done++; });
+  mItems.forEach((_,i)=>{ if(state.checks[mealId(day,i)]) done++; });
+  return total ? Math.round(done/total*100) : 0;
+}
+
+function renderDayTab(day){
+  const meta = DAY_COLORS[day];
+  const tr = TRAINING[day];
+  const me = MEALS[day];
+  const pct = dayCompletion(day);
+
+  let exHtml = tr.items.map((it,i)=>{
+    const id = exId(day,i);
+    const checked = !!state.checks[id];
+    const logVal = state.logs[id] || '';
+    return `
+    <label class="ex-row ${checked?'done':''}">
+      <input type="checkbox" class="checkbox" data-check="${id}" ${checked?'checked':''}>
+      <div class="ex-icon-wrap" style="background:${iconBg(day)}">${iconSvg(it.icon)}</div>
+      <div class="ex-body">
+        <div class="ex-name">${it.n}</div>
+        ${it.tag?`<span class="ex-tag">${it.tag}</span>`:''}
+        <div class="ex-meta">${it.s} séries × ${it.r} &nbsp;·&nbsp; repos ${it.rest}</div>
+        ${it.desc?`<div class="ex-desc">${it.desc}</div>`:''}
+        <div class="ex-log">
+          <span>Charge :</span>
+          <input type="text" placeholder="ex: 60kg" value="${logVal.replace(/"/g,'&quot;')}" data-log="${id}">
+        </div>
+      </div>
+    </label>`;
+  }).join('');
+
+  let mealHtml = me.meals.map((m,i)=>{
+    const id = mealId(day,i);
+    const checked = !!state.checks[id];
+    return `
+    <div class="meal ${checked?'done':''}">
+      <label class="meal-top">
+        <input type="checkbox" class="checkbox" data-check="${id}" ${checked?'checked':''}>
+        <div class="meal-info">
+          <div class="meal-title-row">
+            <span class="meal-name">${m.n}</span>
+            <span class="meal-kcal">${m.k}</span>
+          </div>
+          <ul>${m.items.map(x=>`<li>${x}</li>`).join('')}</ul>
+        </div>
+      </label>
+    </div>`;
+  }).join('');
+
+  return `
+    <div class="card" style="padding-top:0;">
+      <div class="day-band ${meta.band}">
+        <div class="label">${meta.label} · Jour ${DAY_ORDER.indexOf(day)+1}</div>
+        <h2>🏋️ ${tr.title}</h2>
+        <div class="progress-wrap">
+          <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+          <div class="progress-label">${pct}% complété aujourd'hui</div>
+        </div>
+      </div>
+      <div class="sub">${tr.sub}</div>
+      ${tr.warmup?`<div class="note"><b>Échauffement :</b> ${tr.warmup}</div>`:''}
+      ${tr.note?`<div class="note">${tr.note}</div>`:''}
+      ${exHtml}
+    </div>
+
+    <div class="card">
+      <h2>🍽️ Alimentation</h2>
+      <div class="sub">Plan du jour — coche chaque repas pris.</div>
+      ${mealHtml}
+      <div class="day-total">Total estimé <b>${me.tot}</b></div>
+    </div>
+
+    <button class="reset-btn" data-reset="${day}">↺ Réinitialiser les cases de ce jour</button>
+  `;
+}
+
+function renderAccueil(){
+  const weekColors = DAY_ORDER.map(d=>{
+    const m = DAY_COLORS[d];
+    const bg = m.dot;
+    return `<div class="week-cell" style="background:${bg}"><span class="d">${m.label.slice(0,3)}</span>${dayCompletion(d)}%</div>`;
+  }).join('');
+
+  // global stats
+  let totalAll=0, doneAll=0;
+  DAY_ORDER.forEach(d=>{
+    const tItems = TRAINING[d].items, mItems = MEALS[d].meals;
+    totalAll += tItems.length + mItems.length;
+    tItems.forEach((_,i)=>{ if(state.checks[exId(d,i)]) doneAll++; });
+    mItems.forEach((_,i)=>{ if(state.checks[mealId(d,i)]) doneAll++; });
+  });
+  const globalPct = totalAll? Math.round(doneAll/totalAll*100):0;
+
+  return `
+    <div class="global-progress">
+      <h2>Ta progression cette semaine</h2>
+      <div class="ring-row">
+        <div class="ring"><div class="pct">${globalPct}%</div><div class="lbl">cases cochées</div></div>
+        <div class="ring"><div class="pct">5/sem</div><div class="lbl">séances</div></div>
+        <div class="ring"><div class="pct">~2 450</div><div class="lbl">kcal cible/j</div></div>
+      </div>
+      <div class="week-grid">${weekColors}</div>
+    </div>
+
+    <div class="card">
+      <h2>Objectifs prioritaires</h2>
+      <div class="objectifs">
+        <span class="obj-pill" style="background:var(--orange)">Torse</span>
+        <span class="obj-pill" style="background:var(--teal)">Épaules</span>
+        <span class="obj-pill" style="background:var(--gold);color:#1a1a1a">Bras</span>
+        <span class="obj-pill" style="background:var(--orange)">Fessiers</span>
+        <span class="obj-pill" style="background:var(--teal)">Perte ventre</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Règles d'or</h2>
+      <ol class="rules">
+        <li><b>Surcharge progressive.</b> Note CHAQUE séance (poids × séries × reps) dans le champ « Charge » de chaque exercice — sans suivi écrit, pas de vraie progression.</li>
+        <li><b>Double progression.</b> Reste dans la fourchette de reps. Dès le HAUT de la fourchette sur TOUTES les séries, 2 séances de suite → augmente le poids (+2,5-5kg haut du corps / +5-10kg bas du corps) et redescends en bas de fourchette.</li>
+        <li><b>Semaine 1 en douceur.</b> 60-70% des charges visées sur squat, soulevé de terre, développé militaire. Monte normalement dès la semaine 2.</li>
+        <li><b>Deload toutes les 6 semaines.</b> Mêmes charges, volume coupé de moitié (2 séries au lieu de 4).</li>
+        <li><b>Échauffement systématique</b> avant chaque séance — voir la note en haut de chaque jour.</li>
+        <li><b>Pas de perte de graisse localisée.</b> C'est l'alimentation + l'activité globale qui réduisent la masse grasse partout, progressivement.</li>
+        <li><b>Sommeil.</b> 7-8h/nuit — c'est pendant le sommeil que le muscle se répare et grossit.</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h2>🍽️ Nouveau cap nutritionnel</h2>
+      <div class="sub" style="font-size:13px;">
+        Objectif mis à jour : <b>perdre du gras (surtout au niveau de la taille) tout en continuant à prendre du muscle.</b> On passe d'un apport de maintenance (~2 900 kcal) à un <b>déficit modéré (~2 450 kcal/j, -15%)</b>. Les protéines restent hautes (~195-200g/j) pour protéger le muscle ; ce sont les glucides et un peu de lipides qui baissent.
+      </div>
+      <div class="note" style="margin-top:10px;margin-bottom:0;">
+        <b>Comment ajuster :</b> pèse-toi 1×/semaine à jeun. Si en 2-3 semaines ton poids ne bouge pas du tout ou que le tour de taille ne diminue pas → réduis encore de 100-150 kcal/j. Si tu perds plus de 0,5-0,7 kg/semaine → augmente de 100-150 kcal/j pour ne pas perdre de muscle. Le tour de taille qui diminue progressivement est ton meilleur indicateur, pas juste le poids.
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Ce que j'ai ajusté pour toi</h2>
+      <ul class="changelog">
+        <li><b>Plan alimentaire revu en déficit modéré</b> (~2 450 kcal au lieu de ~2 900) pour vraiment faire baisser la masse grasse et affiner la taille, sans toucher aux quantités de protéines.</li>
+        <li><b>Descriptions courtes ajoutées</b> sur chaque exercice pour clarifier l'exécution technique en complément du pictogramme.</li>
+        <li><b>Volume épaules réduit</b> (Push B) : -1 série sur élévations latérales lourdes, Arnold press et élévations frontales. Le cumul Lundi + Jeudi était trop élevé pour une reprise post-convalescence.</li>
+        <li><b>Gainage ajouté</b> (planche, dead bug) les jours Push — sécurité lombaire, surtout après convalescence.</li>
+        <li><b>Leg curl ajouté</b> le jour Legs pour équilibrer le travail des ischios (absent avant).</li>
+        <li><b>Repos complet recommandé</b> le samedi des semaines 1 à 3, à la place de la marche — pour bien relancer la récupération. Reprends la marche soutenue dès la semaine 4.</li>
+      </ul>
+    </div>
+  `;
+}
+
+function renderSuivi(){
+  const rows = suivi.map((s,i)=>`
+    <tr>
+      <td>${s.date}</td>
+      <td>${s.type}</td>
+      <td>${s.value}</td>
+      <td class="del" data-del="${i}">✕</td>
+    </tr>
+  `).join('');
+
+  return `
+    <div class="card">
+      <h2>Ton suivi de progression</h2>
+      <div class="sub">
+        Poids : 1×/semaine à jeun, le matin · Tour de taille / hanches / poitrine / bras : toutes les 2 semaines · Photos : toutes les 2 semaines, même lieu / lumière.
+      </div>
+      <div class="field-row">
+        <input type="date" id="suiviDate">
+        <select id="suiviType">
+          <option value="Poids (kg)">Poids (kg)</option>
+          <option value="Tour de taille (cm)">Tour de taille (cm)</option>
+          <option value="Tour de hanches (cm)">Tour de hanches (cm)</option>
+          <option value="Tour de poitrine (cm)">Tour de poitrine (cm)</option>
+          <option value="Tour de bras (cm)">Tour de bras (cm)</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <input type="text" id="suiviValue" placeholder="Valeur (ex: 91.5)">
+        <button class="add-btn" id="suiviAdd">Ajouter</button>
+      </div>
+      <table class="log">
+        <tr><th>Date</th><th>Mesure</th><th>Valeur</th><th></th></tr>
+        ${rows || '<tr><td colspan="4" style="color:#9a9a9a">Aucune entrée encore.</td></tr>'}
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>À quoi t'attendre</h2>
+      <div class="sub" style="font-size:13px;">
+        Avec ce programme et une alimentation à maintenance haute en protéines : compte <b>3-4 semaines</b> pour ressentir une nette amélioration de la force, et <b>6-10 semaines</b> pour voir des changements visibles de volume musculaire (épaules, bras, fessiers). La réduction de la zone abdominale sera plus progressive — c'est normal et attendu avec cette approche orientée prise de masse.
+      </div>
+    </div>
+  `;
+}
+
+function render(){
+  buildPills();
+  if(activeTab==='accueil'){ main.innerHTML = renderAccueil(); }
+  else if(activeTab==='suivi'){ main.innerHTML = renderSuivi(); attachSuiviHandlers(); }
+  else { main.innerHTML = renderDayTab(activeTab); }
+  attachCommonHandlers();
+}
+
+function attachCommonHandlers(){
+  main.querySelectorAll('[data-check]').forEach(el=>{
+    el.addEventListener('change', ()=>{
+      const id = el.dataset.check;
+      state.checks[id] = el.checked;
+      saveState();
+      render();
+    });
+  });
+  main.querySelectorAll('[data-log]').forEach(el=>{
+    el.addEventListener('click', (e)=>{ e.stopPropagation(); });
+    el.addEventListener('input', ()=>{
+      state.logs[el.dataset.log] = el.value;
+      saveState();
+    });
+  });
+  main.querySelectorAll('[data-reset]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const day = el.dataset.reset;
+      Object.keys(state.checks).forEach(k=>{
+        if(k.includes(`_${day}_`)) delete state.checks[k];
+      });
+      saveState();
+      render();
+    });
+  });
+}
+
+function attachSuiviHandlers(){
+  const btn = document.getElementById('suiviAdd');
+  if(!btn) return;
+  btn.addEventListener('click', ()=>{
+    const date = document.getElementById('suiviDate').value || new Date().toISOString().slice(0,10);
+    const type = document.getElementById('suiviType').value;
+    const value = document.getElementById('suiviValue').value;
+    if(!value) return;
+    suivi.unshift({date,type,value});
+    saveSuivi();
+    render();
+  });
+  main.querySelectorAll('[data-del]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      suivi.splice(parseInt(el.dataset.del),1);
+      saveSuivi();
+      render();
+    });
+  });
+}
+
+render();
+</script>
+</body>
+</html>
